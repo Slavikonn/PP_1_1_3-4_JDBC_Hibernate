@@ -10,10 +10,10 @@ public class Main {
 
         userService.createUsersTable();
 
-        userService.saveUser("Мария", "Петрова", (byte) 20);
-        userService.saveUser("Иван", "Иванов", (byte) 30);
-        userService.saveUser("Михаил", "Васильев", (byte) 40);
-        userService.saveUser("Екатерина", "Сергеева", (byte) 50);
+        userService.saveUser("Мария", "Петрова", (byte) 25);
+        userService.saveUser("Иван", "Иванов", (byte) 32);
+        userService.saveUser("Екатерина", "Сергеева", (byte) 40);
+        userService.saveUser("Михаил", "Васильев", (byte) 55);
 
         System.out.println(userService.getAllUsers());
 
@@ -21,6 +21,9 @@ public class Main {
 
         userService.dropUsersTable();
 
+
         Util.closeConnection();
+
+        Util.closeSessionFactory();
     }
 }
