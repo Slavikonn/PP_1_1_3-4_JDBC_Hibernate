@@ -2,6 +2,7 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -24,9 +25,14 @@ public class UserDaoHibernateImpl implements UserDao {
                 "age TINYINT NOT NULL)";
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(sql);
-            query.executeUpdate();
-            transaction.commit();
+            try {
+                Query query = session.createSQLQuery(sql);
+                query.executeUpdate();
+                transaction.commit();
+            } catch (HibernateException e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -35,9 +41,14 @@ public class UserDaoHibernateImpl implements UserDao {
         String sql = "DROP TABLE IF EXISTS users";
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(sql);
-            query.executeUpdate();
-            transaction.commit();
+            try {
+                Query query = session.createSQLQuery(sql);
+                query.executeUpdate();
+                transaction.commit();
+            } catch (HibernateException e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -45,9 +56,14 @@ public class UserDaoHibernateImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.persist(new User(name, lastName, age));
-            transaction.commit();
-            System.out.println("User с именем — " + name + " добавлен в базу данных");
+            try {
+                session.persist(new User(name, lastName, age));
+                transaction.commit();
+                System.out.println("User с именем — " + name + " добавлен в базу данных");
+            } catch (HibernateException e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -55,9 +71,14 @@ public class UserDaoHibernateImpl implements UserDao {
     public void removeUserById(long id) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            User user = session.get(User.class, id);
-            session.remove(user);
-            transaction.commit();
+            try {
+                User user = session.get(User.class, id);
+                session.remove(user);
+                transaction.commit();
+            } catch (HibernateException e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -75,9 +96,14 @@ public class UserDaoHibernateImpl implements UserDao {
         String sql = "TRUNCATE TABLE users";
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(sql);
-            query.executeUpdate();
-            transaction.commit();
+            try {
+                Query query = session.createSQLQuery(sql);
+                query.executeUpdate();
+                transaction.commit();
+            } catch (HibernateException e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
         }
     }
 }
